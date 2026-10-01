@@ -40,7 +40,7 @@ var chartPeriods = map[string]struct{ api, label string }{
 	"alltime": {"overall", "All-time"},
 }
 
-const chartUsage = "Usage: /c [3x3 … 9x9] [weekly|monthly|yearly|alltime] [last.fm username]"
+const chartUsage = "Usage: .c [3x3 … 9x9] [weekly|monthly|yearly|alltime] [last.fm username]"
 
 var titleFace = mustFace(gobold.TTF, 16)
 
@@ -56,7 +56,7 @@ func mustFace(ttf []byte, size float64) font.Face {
 	return face
 }
 
-// replies to "/c [size] [period] [username]" with a collage of the
+// replies to ".c [size] [period] [username]" with a collage of the
 // user's top albums. Arguments may come in any order.
 func (b *bot) handleChart(ctx context.Context, message *types.Message, args []string) error {
 	size, period, username := chartDefaultSize, "weekly", ""
@@ -81,7 +81,7 @@ func (b *bot) handleChart(ctx context.Context, message *types.Message, args []st
 		username = arg
 	}
 	if username == "" {
-		linked, ok, err := b.linkedUsername(ctx, message, "/c <size> <period> <last.fm username>")
+		linked, ok, err := b.linkedUsername(ctx, message, ".c <size> <period> <last.fm username>")
 		if !ok {
 			return err
 		}

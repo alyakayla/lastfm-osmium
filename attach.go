@@ -11,7 +11,7 @@ import (
 
 func (b *bot) handleAttach(ctx context.Context, message *types.Message, args []string) error {
 	if len(args) != 1 {
-		_, err := message.Reply(ctx, "Usage: /attach <last.fm username>")
+		_, err := message.Reply(ctx, "Usage: .attach <last.fm username>")
 		return err
 	}
 	username := args[0]
@@ -34,6 +34,6 @@ func (b *bot) handleAttach(ctx context.Context, message *types.Message, args []s
 		return err
 	}
 
-	_, err = message.Reply(ctx, fmt.Sprintf("Linked your Last.fm account %s. Run /bio to see your profile.", user.Name))
+	_, err = message.Reply(ctx, fmt.Sprintf("Linked your Last.fm account %s. Run .bio to see your profile.", user.Name))
 	return err
 }

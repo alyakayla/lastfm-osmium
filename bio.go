@@ -15,7 +15,7 @@ func (b *bot) handleBio(ctx context.Context, message *types.Message, args []stri
 	var username string
 	switch len(args) {
 	case 0:
-		linked, ok, err := b.linkedUsername(ctx, message, "/bio <last.fm username>")
+		linked, ok, err := b.linkedUsername(ctx, message, ".bio <last.fm username>")
 		if !ok {
 			return err
 		}
@@ -23,7 +23,7 @@ func (b *bot) handleBio(ctx context.Context, message *types.Message, args []stri
 	case 1:
 		username = args[0]
 	default:
-		_, err := message.Reply(ctx, "Usage: /bio [last.fm username]")
+		_, err := message.Reply(ctx, "Usage: .bio [last.fm username]")
 		return err
 	}
 

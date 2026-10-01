@@ -19,7 +19,7 @@ type bot struct {
 }
 
 // returns the Last.fm username the message author linked with
-// /attach. When ok is false it has already replied explaining why, and err is
+// .attach. When ok is false it has already replied explaining why, and err is
 // the result of that reply. alternative is suggested as another way to run
 // the command.
 func (b *bot) linkedUsername(ctx context.Context, message *types.Message, alternative string) (username string, ok bool, err error) {
@@ -30,7 +30,7 @@ func (b *bot) linkedUsername(ctx context.Context, message *types.Message, altern
 		return "", false, err
 	}
 	if linked == "" {
-		_, err := message.Reply(ctx, "You haven't linked a Last.fm account yet. Use /attach <last.fm username> or "+alternative+".")
+		_, err := message.Reply(ctx, "You haven't linked a Last.fm account yet. Use .attach <last.fm username> or "+alternative+".")
 		return "", false, err
 	}
 	return linked, true, nil
