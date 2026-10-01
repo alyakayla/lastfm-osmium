@@ -1,0 +1,13 @@
+services:
+  bot:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_PATH: /data/lastfm-osmium.db
+    volumes:
+      - db:/data
+    stop_signal: SIGINT
+
+volumes:
+  db:
