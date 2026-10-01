@@ -14,7 +14,7 @@ import (
 const lastfmAPIURL = "https://ws.audioscrobbler.com/2.0/"
 
 // is returned when Last.fm has no user with the given name.
-var errUserNotFound = errors.New("last.fm user not found")
+var errNotFound = errors.New("last.fm: not found")
 
 type lastfmClient struct {
 	apiKey string
@@ -149,6 +149,26 @@ func (c *lastfmClient) TopAlbums(ctx context.Context, username, period string, l
 	return albums, nil
 }
 
+// returns Last.fm's corrected spelling of artist and how many times username
+// has scrobbled it.
+func (c *lastfmClient) ArtistPlays(ctx context.Context, artist, username string) (name string, plays int, err error) {
+	var resp struct {
+		Artist struct {
+			Name  string `json:"name"`
+			Stats struct {
+				UserPlaycount string `json:"userplaycount"`
+			} `json:"stats"`
+		} `json:"artist"`
+	}
+	params := url.Values{"artist": {artist}, "username": {username}, "autocorrect": {"1"}}
+	if err := c.call(ctx, "artist.getinfo", params, &resp); err != nil {
+		return "", 0, err
+	}
+	// The count is missing when the user has never scrobbled the artist.
+	plays, _ = strconv.Atoi(resp.Artist.Stats.UserPlaycount)
+	return resp.Artist.Name, plays, nil
+}
+
 // decodes a Last.fm list field, which is an object instead of an
 // array when it holds a single item, and missing when it holds none.
 func decodeList[T any](raw json.RawMessage) ([]T, error) {
@@ -192,7 +212,7 @@ func (c *lastfmClient) call(ctx context.Context, method string, params url.Value
 	}
 	if err := json.Unmarshal(body, &apiErr); err == nil && apiErr.Code != 0 {
 		if apiErr.Code == 6 {
-			return errUserNotFound
+			return errNotFound
 		}
 		return fmt.Errorf("%s: last.fm error %d: %s", method, apiErr.Code, apiErr.Message)
 	}

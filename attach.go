@@ -16,9 +16,9 @@ func (b *bot) handleAttach(ctx context.Context, message *types.Message, args []s
 	}
 	username := args[0]
 
-	// Confirm the account exists and stores lastfm's canonical spelling.
+	// confirm the account exists and stores lastfm's canonical spelling.
 	user, err := b.lastfm.UserInfo(ctx, username)
-	if errors.Is(err, errUserNotFound) {
+	if errors.Is(err, errNotFound) {
 		_, err := message.Reply(ctx, fmt.Sprintf("No Last.fm user named %q.", username))
 		return err
 	}

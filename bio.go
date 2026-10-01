@@ -28,7 +28,7 @@ func (b *bot) handleBio(ctx context.Context, message *types.Message, args []stri
 	}
 
 	user, err := b.lastfm.UserInfo(ctx, username)
-	if errors.Is(err, errUserNotFound) {
+	if errors.Is(err, errNotFound) {
 		_, err := message.Reply(ctx, fmt.Sprintf("No Last.fm user named %q.", username))
 		return err
 	}

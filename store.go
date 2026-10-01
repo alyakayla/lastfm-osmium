@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/ofabiodev/osmose/types"
@@ -60,6 +61,35 @@ func (s *store) LastfmUsername(ctx context.Context, id types.ID) (string, error)
 		return "", nil
 	}
 	return username, err
+}
+
+// link is an Osmium user and the Last.fm account they attached.
+type link struct {
+	OsmiumID       types.ID
+	LastfmUsername string
+}
+
+// Links returns every attached account.
+func (s *store) Links(ctx context.Context) ([]link, error) {
+	rows, err := s.db.QueryContext(ctx, `SELECT osmium_id, lastfm_username FROM users`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var links []link
+	for rows.Next() {
+		var id, username string
+		if err := rows.Scan(&id, &username); err != nil {
+			return nil, err
+		}
+		n, err := strconv.ParseUint(id, 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid osmium_id %q: %w", id, err)
+		}
+		links = append(links, link{OsmiumID: types.ID(n), LastfmUsername: username})
+	}
+	return links, rows.Err()
 }
 
 // formatID stores IDs as text because Osmium IDs are uint64 and SQLite

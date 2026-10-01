@@ -93,7 +93,7 @@ func (b *bot) handleChart(ctx context.Context, message *types.Message, args []st
 	}
 
 	albums, err := b.lastfm.TopAlbums(ctx, username, chartPeriods[period].api, size*size)
-	if errors.Is(err, errUserNotFound) {
+	if errors.Is(err, errNotFound) {
 		_, err := message.Reply(ctx, fmt.Sprintf("No Last.fm user named %q.", username))
 		return err
 	}

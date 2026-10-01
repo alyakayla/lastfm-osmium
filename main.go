@@ -75,6 +75,14 @@ func main() {
 	})
 
 	client.OnMessage(func(ctx context.Context, message *types.Message) error {
+		// in case a bot account invoked the command.
+		if message.Author != nil && message.Author.Bot {
+			return nil
+		}
+		if self := client.User(); self != nil && message.AuthorID == self.ID {
+			return nil
+		}
+
 		fields := strings.Fields(message.Content)
 		if len(fields) == 0 {
 			return nil
@@ -86,6 +94,8 @@ func main() {
 			return b.handleAttach(ctx, message, fields[1:])
 		case ".c", ".chart":
 			return b.handleChart(ctx, message, fields[1:])
+		case ".w", ".whoknows":
+			return b.handleWhoKnows(ctx, message, fields[1:])
 		}
 		return nil
 	})
